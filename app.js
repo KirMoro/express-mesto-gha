@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const userRoutes = require('./routes/users');
+const cardRoutes = require('./routes/cards');
 const mongoose = require('mongoose');
 
 const app = express();
@@ -22,6 +23,8 @@ app.use((req, res, next) => {
 
   next();
 });
+
+app.use('/', cardRoutes);
 
 
 app.listen(3000);

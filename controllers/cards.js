@@ -47,16 +47,18 @@ export const likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => res.send(card))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
+    .then((card) => {
+      if (!card) {
         res
           .status(constants.HTTP_STATUS_NOT_FOUND)
           .send({ message: 'Передан несуществующий _id карточки.' });
-      } else if (err.name === 'CastError') {
+      } else res.send(card);
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
         res
           .status(constants.HTTP_STATUS_BAD_REQUEST)
-          .send({ message: 'Переданы некорректные данные для снятия лайка.' });
+          .send({ message: 'Переданы некорректные данные для постановки лайка.' });
       } else {
         res
           .status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
@@ -71,13 +73,15 @@ export const dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .then((card) => res.send({ data: card }))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
+    .then((card) => {
+      if (!card) {
         res
           .status(constants.HTTP_STATUS_NOT_FOUND)
           .send({ message: 'Передан несуществующий _id карточки.' });
-      } else if (err.name === 'CastError') {
+      } else res.send(card);
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
         res
           .status(constants.HTTP_STATUS_BAD_REQUEST)
           .send({ message: 'Переданы некорректные данные для снятия лайка.' });

@@ -9,8 +9,6 @@ app.use(bodyParser.json());
 
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
-app.use('/', userRoutes);
-
 app.use((req, res, next) => {
   req.user = { // хардкод для тестов
     _id: '6359a936a6c2b3d7aa044426',
@@ -24,6 +22,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use('/', userRoutes);
 app.use('/', cardRoutes);
 
 

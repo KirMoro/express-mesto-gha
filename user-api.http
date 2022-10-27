@@ -17,3 +17,25 @@ Cache-Control: no-cache
 Content-Type: application/json
 
 ###
+
+PATCH http://localhost:3000/users/me
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+{
+  "name":"Пользователь",
+  "about":"работает"
+}
+
+###
+PATCH http://localhost:3000/users/me/avatar
+Accept: */*
+Cache-Control: no-cache
+Content-Type: application/json
+
+{
+  "avatar":"http://avatars.lend"
+}
+
+###

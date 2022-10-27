@@ -36,7 +36,7 @@ Authorization: 634acfe1f470f96c0c324948
 
 ### !!! Удаление карточки
 
-DELETE http://localhost:3000/cards/634b09159b98fd1352ca3f3b
+DELETE http://localhost:3000/cards/6359aeb68f1c35f6f74e5729
 Accept: */*
 Cache-Control: no-cache
 Content-Type: application/json

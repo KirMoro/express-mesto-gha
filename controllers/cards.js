@@ -6,16 +6,16 @@ module.exports.getCards = (req, res) => {
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 };
 
-module.exports.getCardById = (req, res) => {
-  Card.findById(req.params.id)
-    .then(card => res.send({ data: card }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
-};
-
 module.exports.createCard = (req, res) => {
   const { name, link } = req.body;
   const newCard = { name, link, owner: req.user._id };
   Card.create(newCard)
+    .then(card => res.send({ data: card }))
+    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
+};
+
+module.exports.deleteCard = (req, res) => {
+  Card.findByIdAndRemove(req.params.id)
     .then(card => res.send({ data: card }))
     .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 };

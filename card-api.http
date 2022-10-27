@@ -18,7 +18,7 @@ Content-Type: application/json
 
 ### Лайк
 
-PUT http://localhost:3000/cards/634ec3ba5a1c69cf1cd52227/likes
+PUT http://localhost:3000/cards/635a379609ad85169d801f95/likes
 Accept: */*
 Cache-Control: no-cache
 Content-Type: application/json
@@ -26,7 +26,7 @@ Authorization: 634acfe1f470f96c0c324948
 
 ### Дизлайк
 
-DELETE http://localhost:3000/cards/634ec3ba5a1c69cf1cd52227/likes
+DELETE http://localhost:3000/cards/635a379609ad85169d801f95/likes
 Accept: */*
 Cache-Control: no-cache
 Content-Type: application/json

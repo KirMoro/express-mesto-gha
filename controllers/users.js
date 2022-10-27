@@ -18,9 +18,17 @@ export const getUserById = (req, res) => {
           .send({ message: 'Пользователь по указанному _id не найден.' });
       } else res.send(user);
     })
-    .catch((err) => res
-      .status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
-      .send({ message: `На сервере произошла ошибка. ${err.message}.` }));
+    .catch((err) => {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        res
+          .status(constants.HTTP_STATUS_BAD_REQUEST)
+          .send({ message: 'Переданы некорректные данные для поиска пользователя.' });
+      } else {
+        res
+          .status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
+          .send({ message: `На сервере произошла ошибка. ${err.message}` });
+      }
+    });
 };
 
 export const createUser = (req, res) => {
@@ -28,7 +36,7 @@ export const createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then((user) => res.send(user))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
         res
           .status(constants.HTTP_STATUS_BAD_REQUEST)
           .send({ message: 'Переданы некорректные данные при создании пользователя.' });

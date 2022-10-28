@@ -6,7 +6,7 @@ export const getUsers = (req, res) => {
     .then((users) => res.send(users))
     .catch((err) => res
       .status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
-      .send({ message: `На сервере произошла ошибка. ${err.message}` }));
+      .send({ message: 'На сервере произошла ошибка.'}));
 };
 
 export const getUserById = (req, res) => {
@@ -26,7 +26,7 @@ export const getUserById = (req, res) => {
       } else {
         res
           .status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
-          .send({ message: `На сервере произошла ошибка. ${err.message}` });
+          .send({ message: 'На сервере произошла ошибка.'});
       }
     });
 };
@@ -43,7 +43,7 @@ export const createUser = (req, res) => {
       } else {
         res
           .status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
-          .send({ message: `На сервере произошла ошибка. ${err.message}` });
+          .send({ message: 'На сервере произошла ошибка.'});
       }
     });
 };
@@ -53,7 +53,9 @@ export const updateUserProfile = (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
     { name, about },
-    { new: true },
+    { new: true,
+      runValidators: true
+    },
   )
     .then((user) => {
       if (!user) {
@@ -70,7 +72,7 @@ export const updateUserProfile = (req, res) => {
       } else {
         res
           .status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
-          .send({ message: `На сервере произошла ошибка. ${err.message}` });
+          .send({ message: 'На сервере произошла ошибка.'});
       }
     });
 };
@@ -80,7 +82,9 @@ export const updateUserAvatar = (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
     { avatar },
-    { new: true },
+    { new: true,
+      runValidators: true
+    },
   )
     .then((user) => {
       if (!user) {
@@ -97,7 +101,7 @@ export const updateUserAvatar = (req, res) => {
       } else {
         res
           .status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
-          .send({ message: `На сервере произошла ошибка. ${err.message}` });
+          .send({ message: 'На сервере произошла ошибка.'});
       }
     });
 };

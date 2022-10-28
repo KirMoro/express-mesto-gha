@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 import { constants } from 'http2';
 import { userRoutes } from './routes/users.js';
 import { cardRoutes } from './routes/cards.js';
+const { PORT = 3000 } = process.env;
 
 process.on('unhandledRejection', (err) => {
   console.error(err);
@@ -34,4 +35,4 @@ app.all('/*', (req, res) => res
   .status(constants.HTTP_STATUS_NOT_FOUND)
   .send({ message: 'Запрошена несуществующая страница' }));
 
-app.listen(3000);
+app.listen(PORT);

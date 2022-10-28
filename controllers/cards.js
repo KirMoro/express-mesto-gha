@@ -33,18 +33,18 @@ export const deleteCard = (req, res) => {
       if (!card) {
         res
           .status(constants.HTTP_STATUS_NOT_FOUND)
-          .send({message: 'Карточка с указанным _id не найдена.'});
+          .send({ message: 'Карточка с указанным _id не найдена.' });
       } else res.send(card);
     })
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
         res
           .status(constants.HTTP_STATUS_BAD_REQUEST)
-          .send({message: 'Переданы некорректные данные для удаления карточки.'});
+          .send({ message: 'Переданы некорректные данные для удаления карточки.' });
       } else {
         res
           .status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
-          .send({message: `На сервере произошла ошибка. ${err.message}.`});
+          .send({ message: `На сервере произошла ошибка. ${err.message}.` });
       }
     });
 };

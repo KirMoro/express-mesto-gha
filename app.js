@@ -4,6 +4,7 @@ import process from 'process';
 import mongoose from 'mongoose';
 import { userRoutes } from './routes/users.js';
 import { cardRoutes } from './routes/cards.js';
+import {constants} from "http2";
 
 process.on('unhandledRejection', (err) => {
   console.error(err);
@@ -29,5 +30,8 @@ app.use((req, res, next) => {
 
 app.use('/users', userRoutes);
 app.use('/cards', cardRoutes);
+app.all('/*', (req, res) => res
+  .status(constants.HTTP_STATUS_NOT_FOUND)
+  .send({ message: `Запрошена несуществующая страница` }))
 
 app.listen(3000);

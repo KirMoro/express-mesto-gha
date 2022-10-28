@@ -4,9 +4,9 @@ import { Card } from '../models/card.js';
 export const getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send(cards))
-    .catch((err) => res
+    .catch(() => res
       .status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
-      .send({ message: 'На сервере произошла ошибка.'}));
+      .send({ message: 'На сервере произошла ошибка.' }));
 };
 
 export const createCard = (req, res) => {
@@ -22,7 +22,7 @@ export const createCard = (req, res) => {
       } else {
         res
           .status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
-          .send({ message: 'На сервере произошла ошибка.'});
+          .send({ message: 'На сервере произошла ошибка.' });
       }
     });
 };
@@ -44,7 +44,7 @@ export const deleteCard = (req, res) => {
       } else {
         res
           .status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
-          .send({ message: 'На сервере произошла ошибка.'});
+          .send({ message: 'На сервере произошла ошибка.' });
       }
     });
 };
@@ -53,8 +53,9 @@ export const likeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
-    { new: true,
-      runValidators: true
+    {
+      new: true,
+      runValidators: true,
     },
   )
     .then((card) => {
@@ -72,7 +73,7 @@ export const likeCard = (req, res) => {
       } else {
         res
           .status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
-          .send({ message: 'На сервере произошла ошибка.'});
+          .send({ message: 'На сервере произошла ошибка.' });
       }
     });
 };
@@ -81,8 +82,9 @@ export const dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
     { $pull: { likes: req.user._id } },
-    { new: true,
-      runValidators: true
+    {
+      new: true,
+      runValidators: true,
     },
   )
     .then((card) => {
@@ -100,7 +102,7 @@ export const dislikeCard = (req, res) => {
       } else {
         res
           .status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
-          .send({ message: 'На сервере произошла ошибка.'});
+          .send({ message: 'На сервере произошла ошибка.' });
       }
     });
 };

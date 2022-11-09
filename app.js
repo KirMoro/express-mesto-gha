@@ -1,10 +1,12 @@
 import express from 'express';
 import bodyParser from 'body-parser';
+import bcrypt from 'bcryptjs';
 import process from 'process';
 import mongoose from 'mongoose';
 import { constants } from 'http2';
 import { userRoutes } from './routes/users.js';
 import { cardRoutes } from './routes/cards.js';
+import {createUser, login} from "./controllers/users.js";
 
 const { PORT = 3000 } = process.env;
 
@@ -30,10 +32,32 @@ app.use((req, res, next) => {
   next();
 });
 
+app.post('/signin', login);
+// app.post('/signup', createUser);
 app.use('/users', userRoutes);
 app.use('/cards', cardRoutes);
 app.all('/*', (req, res) => res
   .status(constants.HTTP_STATUS_NOT_FOUND)
   .send({ message: 'Запрошена несуществующая страница' }));
+
+app.use((err, req, res, next) => {
+  if (err instanceof HTTPError) {
+    res
+      .status(err.status)
+      .send({message: err.message})
+  }
+
+  if (err.name === 'ValidationError' || err.name === 'CastError') {
+    res
+      .status(constants.HTTP_STATUS_BAD_REQUEST)
+      .send({ message: 'Переданы некорректные данные для удаления карточки.' });
+  }
+  else {
+    res
+      .status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
+      .send({ message: 'На сервере произошла ошибка.' });
+  };
+  next();
+});
 
 app.listen(PORT);

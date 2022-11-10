@@ -7,6 +7,7 @@ import { constants } from 'http2';
 import { userRoutes } from './routes/users.js';
 import { cardRoutes } from './routes/cards.js';
 import {createUser, login} from "./controllers/users.js";
+import {HTTPError} from "./errors/HTTPError.js";
 
 const { PORT = 3000 } = process.env;
 
@@ -33,7 +34,7 @@ app.use((req, res, next) => {
 });
 
 app.post('/signin', login);
-// app.post('/signup', createUser);
+app.post('/signup', createUser);
 app.use('/users', userRoutes);
 app.use('/cards', cardRoutes);
 app.all('/*', (req, res) => res
@@ -57,6 +58,7 @@ app.use((err, req, res, next) => {
       .status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
       .send({ message: 'На сервере произошла ошибка.' });
   };
+  console.log(err.name)
   next();
 });
 

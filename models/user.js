@@ -19,15 +19,14 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    // unique: true,
+    unique: true,
     require: true,
-    // validate: {},
   },
   password: {
     type: String,
-    // unique: true,
+    unique: true,
     require: true,
-    // validate: {},
+    minlength: 6,
   }
 }, { versionKey: false });
 

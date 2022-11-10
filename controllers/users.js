@@ -1,27 +1,23 @@
 import { constants } from 'http2';
 import { User } from '../models/user.js';
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import {BadRequestError} from "../errors/BadRequestError.js";
+import {HTTPError} from "../errors/HTTPError.js";
 
 export const login = (req, res, next) => {
   const { email, password } = req.body;
-
-  User.findOne({ email })
+  return User.findUserByCredentials(email, password)
     .then((user) => {
-      if (!user) {
-        return Promise.reject(new Error('Неправильные почта или пароль'));
-      }
-      return bcrypt.compare(password, user.password);
-    })
-    .then((matched) => {
-      if (!matched) {
-        return Promise.reject(new Error('Неправильные почта или пароль'));
-      }
-      res.send({ message: 'Всё верно!' });
+      const token = jwt.sign(
+        { _id: user._id },
+        'super-strong-secret',
+        { expiresIn: '7d' }
+      );
+      res.send({ token })
     })
     .catch((err) => {
-      res
-        .status(401)
-        .send({ message: err.message });
+      res.status(401).send({ message: err.message });
     });
 };
 
@@ -56,21 +52,28 @@ export const getUserById = (req, res) => {
 };
 
 export const createUser = (req, res, next) => {
-  console.log('body user', req.body)
-  const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
-    .then((user) => res.send(user))
+  bcrypt.hash(req.body.password, 10)
+    .then((hash) => {
+      req.body.password = hash;
+
+      return User.create(req.body)
+    })
+    .then((document) => {
+      const { password: removed, ...fields } = document.toObject();
+      res.send(fields);
+    })
     .catch((err) => {
-      next(err)
-      // if (err.name === 'ValidationError' || err.name === 'CastError') {
-      //   res
-      //     .status(constants.HTTP_STATUS_BAD_REQUEST)
-      //     .send({ message: 'Переданы некорректные данные при создании пользователя.' });
-      // } else {
-      //   res
-      //     .status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
-      //     .send({ message: 'На сервере произошла ошибка.' });
-      // }
+      if (err instanceof HTTPError) {
+        next(err)
+      }
+      else if (err.name === 'ValidationError' || err.name === 'CastError') {
+        next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
+      }
+      else if (err.code === 11000) {
+        next(err) // new error
+      } else {
+        next(err) // new error
+      }
     });
 };
 

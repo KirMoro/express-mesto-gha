@@ -8,6 +8,8 @@ import { userRoutes } from './routes/users.js';
 import { cardRoutes } from './routes/cards.js';
 import {createUser, login} from "./controllers/users.js";
 import {HTTPError} from "./errors/HTTPError.js";
+import * as dotenv from "dotenv";
+import * as path from "path";
 
 const { PORT = 3000 } = process.env;
 
@@ -18,6 +20,10 @@ process.on('unhandledRejection', (err) => {
 
 const app = express();
 app.use(bodyParser.json());
+
+const config = dotenv.config({ path: path.resolve('.env.common') }).parsed;
+app.set('config', config);
+
 mongoose.set({ runValidators: true });
 mongoose.connect('mongodb://localhost:27017/mestodb');
 

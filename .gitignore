@@ -16,3 +16,5 @@ node_modules
 
 card-api.http
 user-api.http
+
+.env.common

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -27,7 +28,7 @@ const userSchema = new mongoose.Schema({
     unique: true,
     require: true,
     minlength: 6,
-  }
+  },
 }, { versionKey: false });
 
 userSchema.statics.findUserByCredentials = function (email, password) {

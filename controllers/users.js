@@ -1,23 +1,30 @@
 import { constants } from 'http2';
-import { User } from '../models/user.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import {BadRequestError} from "../errors/BadRequestError.js";
-import {HTTPError} from "../errors/HTTPError.js";
+import { User } from '../models/user.js';
+import { BadRequestError } from '../errors/BadRequestError.js';
+import { HTTPError } from '../errors/HTTPError.js';
 
 export const login = (req, res, next) => {
   const { email, password } = req.body;
+  const { JWT_SALT } = req.app.get('config');
+
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        'super-strong-secret',
-        { expiresIn: '7d' }
+        JWT_SALT,
+        { expiresIn: '7d' },
       );
-      res.send({ token })
+      res
+        .cookie('jwt', token, {
+          maxAge: 3600000 * 24 * 7,
+          httpOnly: true
+        })
+        .end();
     })
     .catch((err) => {
-      res.status(401).send({ message: err.message });
+      next(err);
     });
 };
 
@@ -27,6 +34,28 @@ export const getUsers = (req, res) => {
     .catch(() => res
       .status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
       .send({ message: 'На сервере произошла ошибка.' }));
+};
+
+export const getUser = (req, res) => {
+  User.findById(req.params.userId)
+    .then((user) => {
+      if (!user) {
+        res
+          .status(constants.HTTP_STATUS_NOT_FOUND)
+          .send({ message: 'Пользователь по указанному _id не найден.' });
+      } else res.send(user);
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        res
+          .status(constants.HTTP_STATUS_BAD_REQUEST)
+          .send({ message: 'Переданы некорректные данные для поиска пользователя.' });
+      } else {
+        res
+          .status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
+          .send({ message: 'На сервере произошла ошибка.' });
+      }
+    });
 };
 
 export const getUserById = (req, res) => {
@@ -56,7 +85,7 @@ export const createUser = (req, res, next) => {
     .then((hash) => {
       req.body.password = hash;
 
-      return User.create(req.body)
+      return User.create(req.body);
     })
     .then((document) => {
       const { password: removed, ...fields } = document.toObject();
@@ -64,15 +93,13 @@ export const createUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err instanceof HTTPError) {
-        next(err)
-      }
-      else if (err.name === 'ValidationError' || err.name === 'CastError') {
+        next(err);
+      } else if (err.name === 'ValidationError' || err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
-      }
-      else if (err.code === 11000) {
-        next(err) // new error
+      } else if (err.code === 11000) {
+        next(err); // new error
       } else {
-        next(err) // new error
+        next(err); // new error
       }
     });
 };

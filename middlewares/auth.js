@@ -5,7 +5,7 @@ export const auth = (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    throw new UnauthorizedError('Необходима авторизация.');
+    next(new UnauthorizedError('Необходима авторизация.'));
   } else {
     let payload;
     const token = authorization.replace('Bearer ', '');
@@ -13,7 +13,8 @@ export const auth = (req, res, next) => {
     try {
       payload = jwt.verify(token, JWT_SALT);
     } catch (err) {
-      throw new UnauthorizedError('Необходима авторизация.');
+      console.log('error', err.name, err.status)
+      next(new UnauthorizedError('Необходима авторизация.'));
     }
     req.user = payload;
     next();

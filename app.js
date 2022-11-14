@@ -31,8 +31,8 @@ app.set('config', config);
 mongoose.set({ runValidators: true });
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
-app.post('/signin', celebrateLoginUser, login);
 app.post('/signup', celebrateBodyUser, createUser);
+app.post('/signin', celebrateLoginUser, login);
 
 app.use('/users', auth, userRoutes);
 app.use('/cards', auth, cardRoutes);
@@ -41,7 +41,7 @@ app.all('/*', (req, res, next) => next(new NotFoundError('Запрошена н�
 
 app.use(errors());
 app.use((err, req, res, next) => {
-  const status = err.statusCode || constants.HTTP_STATUS_INTERNAL_SERVER_ERROR;
+  const status = err.status || constants.HTTP_STATUS_INTERNAL_SERVER_ERROR;
   const message = err.message || 'Неизвестная ошибка';
   res.status(status).send({ message });
   next();

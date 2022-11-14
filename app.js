@@ -6,13 +6,13 @@ import { constants } from 'http2';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 import { errors } from 'celebrate';
+import cookieParser from 'cookie-parser';
 import { userRoutes } from './routes/users.js';
 import { cardRoutes } from './routes/cards.js';
 import { createUser, login } from './controllers/users.js';
 import { auth } from './middlewares/auth.js';
-import cookieParser from "cookie-parser";
-import {celebrateBodyUser, celebrateLoginUser} from "./validators/users.js";
-import {NotFoundError} from "./errors/NotFoundError.js";
+import { celebrateBodyUser, celebrateLoginUser } from './validators/users.js';
+import { NotFoundError } from './errors/NotFoundError.js';
 
 const { PORT = 3000 } = process.env;
 
@@ -37,9 +37,7 @@ app.post('/signup', celebrateBodyUser, createUser);
 app.use('/users', auth, userRoutes);
 app.use('/cards', auth, cardRoutes);
 
-app.all('/*', (req, res, next) =>
-  next(new NotFoundError('Запрошена несуществующая страница'))
-);
+app.all('/*', (req, res, next) => next(new NotFoundError('Запрошена несуществующая страница')));
 
 app.use(errors());
 app.use((err, req, res, next) => {

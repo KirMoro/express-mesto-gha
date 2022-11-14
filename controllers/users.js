@@ -1,11 +1,11 @@
-import { constants } from 'http2';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/user.js';
 import { BadRequestError } from '../errors/BadRequestError.js';
 import { HTTPError } from '../errors/HTTPError.js';
-import {NotFoundError} from "../errors/NotFoundError.js";
-import {ServerError} from "../errors/ServerError.js";
+import { NotFoundError } from '../errors/NotFoundError.js';
+import { ServerError } from '../errors/ServerError.js';
+import { ConflictError } from '../errors/ConflictError.js';
 
 export const login = (req, res, next) => {
   const { email, password } = req.body;
@@ -21,7 +21,7 @@ export const login = (req, res, next) => {
       res
         .cookie('jwt', token, {
           maxAge: 3600000 * 24 * 7,
-          httpOnly: true
+          httpOnly: true,
         })
         .end();
     })
@@ -31,24 +31,24 @@ export const login = (req, res, next) => {
       } else if (err.name === 'ValidationError' || err.name === 'CastError') {
         next(new BadRequestError('Некорректные данные для пользователя.'));
       } else {
-        next(new ServerError(message));
+        next(new ServerError(err.message));
       }
     });
 };
 
-export const getUsers = (req, res) => {
+export const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send(users))
     .catch((err) => {
       if (err instanceof HTTPError) {
         next(err);
       } else {
-        next(new ServerError(message));
+        next(new ServerError(err.message));
       }
     });
 };
 
-export const getUserById = (req, res) => {
+export const getUserById = (req, res, next) => {
   const userId = (req.params.userId === 'me') ? req.user._id : req.params.userId;
   User.findById(userId)
     .then((user) => {
@@ -59,12 +59,10 @@ export const getUserById = (req, res) => {
     .catch((err) => {
       if (err instanceof HTTPError) {
         next(err);
-      }
-      else if (err.name === 'ValidationError' || err.name === 'CastError') {
+      } else if (err.name === 'ValidationError' || err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные для поиска пользователя.'));
-      }
-      else {
-        next(new ServerError(message));
+      } else {
+        next(new ServerError(err.message));
       }
     });
 };
@@ -88,7 +86,7 @@ export const createUser = (req, res, next) => {
       } else if (err.code === 11000) {
         next(new ConflictError('Пользователь с такой почтой уже существует'));
       } else {
-        next(new ServerError(message));
+        next(new ServerError(err.message));
       }
     });
 };
@@ -111,17 +109,15 @@ export const updateUserProfile = (req, res, next) => {
     .catch((err) => {
       if (err instanceof HTTPError) {
         next(err);
-      }
-      else if (err.name === 'ValidationError' || err.name === 'CastError') {
+      } else if (err.name === 'ValidationError' || err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные при обновлении профиля.'));
-      }
-      else {
-        next(new ServerError(message));
+      } else {
+        next(new ServerError(err.message));
       }
     });
 };
 
-export const updateUserAvatar = (req, res) => {
+export const updateUserAvatar = (req, res, next) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
@@ -139,12 +135,10 @@ export const updateUserAvatar = (req, res) => {
     .catch((err) => {
       if (err instanceof HTTPError) {
         next(err);
-      }
-      else if (err.name === 'ValidationError' || err.name === 'CastError') {
+      } else if (err.name === 'ValidationError' || err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные при обновлении аватара.'));
-      }
-      else {
-        next(new ServerError(message));
+      } else {
+        next(new ServerError(err.message));
       }
     });
 };

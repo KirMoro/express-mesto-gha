@@ -11,6 +11,14 @@ celebrate({
   }),
 });
 
+export const celebrateLoginUser =
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().required(),
+      password: Joi.string().required().min(6),
+    }),
+  });
+
 export const celebrateAvatar = celebrate({
   body: Joi.object().keys({
     avatar: Joi.string().uri(),

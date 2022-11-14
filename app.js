@@ -12,7 +12,7 @@ import { createUser, login } from './controllers/users.js';
 import { HTTPError } from './errors/HTTPError.js';
 import { auth } from './middlewares/auth.js';
 import cookieParser from "cookie-parser";
-import {celebrateBodyUser} from "./validators/users.js";
+import {celebrateBodyUser, celebrateLoginUser} from "./validators/users.js";
 
 const { PORT = 3000 } = process.env;
 
@@ -31,7 +31,7 @@ app.set('config', config);
 mongoose.set({ runValidators: true });
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
-app.post('/signin', login);
+app.post('/signin', celebrateLoginUser, login);
 app.post('/signup', celebrateBodyUser, createUser);
 
 app.use('/users', auth, userRoutes);

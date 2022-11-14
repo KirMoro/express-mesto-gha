@@ -5,14 +5,14 @@ import mongoose from 'mongoose';
 import { constants } from 'http2';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
-import { celebrate, Joi, errors } from 'celebrate';
+import { errors } from 'celebrate';
 import { userRoutes } from './routes/users.js';
 import { cardRoutes } from './routes/cards.js';
 import { createUser, login } from './controllers/users.js';
-import { HTTPError } from './errors/HTTPError.js';
 import { auth } from './middlewares/auth.js';
 import cookieParser from "cookie-parser";
 import {celebrateBodyUser, celebrateLoginUser} from "./validators/users.js";
+import {NotFoundError} from "./errors/NotFoundError.js";
 
 const { PORT = 3000 } = process.env;
 
@@ -37,28 +37,15 @@ app.post('/signup', celebrateBodyUser, createUser);
 app.use('/users', auth, userRoutes);
 app.use('/cards', auth, cardRoutes);
 
-app.all('/*', (req, res) => res
-  .status(constants.HTTP_STATUS_NOT_FOUND)
-  .send({ message: 'Запрошена несуществующая страница' }));
+app.all('/*', (req, res, next) =>
+  next(new NotFoundError('Запрошена несуществующая страница'))
+);
 
 app.use(errors());
 app.use((err, req, res, next) => {
-  if (err instanceof HTTPError) {
-    res
-      .status(err.status)
-      .send({ message: err.message });
-  }
-
-  if (err.name === 'ValidationError' || err.name === 'CastError') {
-    res
-      .status(constants.HTTP_STATUS_BAD_REQUEST)
-      .send({ message: 'Переданы некорректные данные для удаления карточки.' });
-  } else {
-    res
-      .status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
-      .send({ message: 'На сервере произошла ошибка.' });
-  }
-  console.log(err.name);
+  const status = err.statusCode || constants.HTTP_STATUS_INTERNAL_SERVER_ERROR;
+  const message = err.message || 'Неизвестная ошибка';
+  res.status(status).send({ message });
   next();
 });
 

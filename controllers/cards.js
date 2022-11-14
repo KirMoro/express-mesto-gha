@@ -34,7 +34,12 @@ export const deleteCard = (req, res) => {
         res
           .status(constants.HTTP_STATUS_NOT_FOUND)
           .send({ message: 'Карточка с указанным _id не найдена.' });
-      } else res.send(card);
+      } else if (req.user._id !== card.owner) {
+        res
+          .status(constants.HTTP_STATUS_FORBIDDEN)
+          .send({ message: 'Отсутствуют права доступа.' });
+      }
+        else res.send(card);
     })
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {

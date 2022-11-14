@@ -36,30 +36,9 @@ export const getUsers = (req, res) => {
       .send({ message: 'На сервере произошла ошибка.' }));
 };
 
-export const getUser = (req, res) => {
-  User.findById(req.params.userId)
-    .then((user) => {
-      if (!user) {
-        res
-          .status(constants.HTTP_STATUS_NOT_FOUND)
-          .send({ message: 'Пользователь по указанному _id не найден.' });
-      } else res.send(user);
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
-        res
-          .status(constants.HTTP_STATUS_BAD_REQUEST)
-          .send({ message: 'Переданы некорректные данные для поиска пользователя.' });
-      } else {
-        res
-          .status(constants.HTTP_STATUS_INTERNAL_SERVER_ERROR)
-          .send({ message: 'На сервере произошла ошибка.' });
-      }
-    });
-};
-
 export const getUserById = (req, res) => {
-  User.findById(req.params.userId)
+  const userId = (req.params.userId === 'me') ? req.user._id : req.params.userId;
+  User.findById(userId)
     .then((user) => {
       if (!user) {
         res

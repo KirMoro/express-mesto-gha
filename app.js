@@ -30,18 +30,6 @@ app.set('config', config);
 mongoose.set({ runValidators: true });
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
-// app.use((req, res, next) => {
-//   req.user = {
-//     _id: '6359a936a6c2b3d7aa044426',
-//   };
-//
-//   if (req.headers.Authorization || req.headers.authorization) {
-//     req.user._id = req.headers.Authorization || req.headers.authorization;
-//   }
-//
-//   next();
-// });
-
 app.post('/signin', login);
 app.post('/signup', celebrate({
   body: Joi.object().keys({

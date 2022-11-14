@@ -18,12 +18,7 @@ export const login = (req, res, next) => {
         JWT_SALT,
         { expiresIn: '7d' },
       );
-      res
-        .cookie('jwt', token, {
-          maxAge: 3600000 * 24 * 7,
-          httpOnly: true,
-        })
-        .end();
+      res.send({ token });
     })
     .catch((err) => {
       if (err instanceof HTTPError) {

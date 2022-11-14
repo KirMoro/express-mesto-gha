@@ -5,21 +5,21 @@ export const celebrateBodyUser = celebrate({
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
     avatar: Joi.string().uri({ scheme: ['http', 'https'] }),
-    email: Joi.string().required(),
-    password: Joi.string().required().min(6),
+    email: Joi.string().email().required(),
+    password: Joi.string().min(6).required(),
   }),
 });
 
 export const celebrateLoginUser = celebrate({
   body: Joi.object().keys({
-    email: Joi.string().required(),
-    password: Joi.string().required().min(6),
+    email: Joi.string().email().required(),
+    password: Joi.string().min(6).required(),
   }),
 });
 
 export const celebrateAvatar = celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().uri(),
+    avatar: Joi.string().uri({ scheme: ['http', 'https'] }),
   }),
 });
 

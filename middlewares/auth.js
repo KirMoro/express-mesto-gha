@@ -12,7 +12,6 @@ export const auth = (req, res, next) => {
     const { JWT_SALT } = req.app.get('config');
     try {
       payload = jwt.verify(token, JWT_SALT);
-
     } catch (err) {
       throw new UnauthorizedError('Необходима авторизация.');
     }

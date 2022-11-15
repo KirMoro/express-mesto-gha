@@ -45,17 +45,12 @@ export const getUsers = (req, res, next) => {
 };
 
 export const getUserById = (req, res, next) => {
-  console.log('user_id', req.user._id);
-  console.log('params', req.params);
-
   const userId = (req.params.userId === 'me') ? req.user._id : req.params.userId;
-  console.log('userId', userId);
   User.findById(userId)
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Пользователь с указанным _id не найден.');
       } else {
-        console.log('user', user);
         res.status(constants.HTTP_STATUS_OK).send(user);
       }
     })

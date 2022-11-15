@@ -31,9 +31,13 @@ export const celebrateProfile = celebrate({
 });
 
 export const celebrateUserId = celebrate({
-  params: Joi.string().hex().length(24).required(),
+  params: Joi.object({
+    id: Joi.string().hex().length(24).required(),
+  }).required(),
 });
 
 export const celebrateUserMe = celebrate({
-  params: Joi.string().equal('me'),
+  params: Joi.object({
+    id: Joi.string().equal('me'),
+  }).required(),
 });

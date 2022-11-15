@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import { UnauthorizedError } from '../errors/UnauthorizedError.js';
 
 const urlRegex = /^http[s]*:\/\/.+$/;
-const emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+const emailRegex = /^([\w]+@([\w-]+\.)+[\w-]{2,4})?$/;
 
 const userSchema = new mongoose.Schema({
   name: {

@@ -2,6 +2,9 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import { UnauthorizedError } from '../errors/UnauthorizedError.js';
 
+const urlRegex = /^http[s]*:\/\/.+$/;
+const emailRegex = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -19,7 +22,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
-      validator: (link) => /^http[s]*:\/\/.+$/.test(link),
+      validator: (link) => urlRegex.test(link),
       message: () => 'Требуется http(s) ссылка',
     },
   },
@@ -27,6 +30,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     unique: true,
     require: true,
+    validate: {
+      validator: (email) => emailRegex.test(email),
+      message: () => 'Введите корректный email',
+    },
   },
   password: {
     type: String,
@@ -39,17 +46,18 @@ const userSchema = new mongoose.Schema({
 
 userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email }).select('+password')
-    .then((user) => {
-      if (!user) {
-        throw Promise.reject(new UnauthorizedError('Неправильные почта или пароль'));
+    .then((document) => {
+      if (!document) {
+        throw new UnauthorizedError('Неправильные почта или пароль');
       }
-
-      return bcrypt.compare(password, user.password)
+      return bcrypt.compare(password, document.password)
         .then((matched) => {
           if (!matched) {
-            throw Promise.reject(new UnauthorizedError('Неправильные почта или пароль'));
+            throw new UnauthorizedError('Неправильные почта или пароль');
           }
 
+          const user = document.toObject();
+          delete user.password;
           return user;
         });
     });

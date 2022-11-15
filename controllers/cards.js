@@ -35,18 +35,23 @@ export const createCard = (req, res, next) => {
 };
 
 export const deleteCard = (req, res, next) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Карточка с указанным _id не найдена.');
       } else if (req.user._id !== card.owner.toString()) {
         throw new ForbiddenError('Отсутствуют права доступа.');
-      } else res.send(card);
+      } else {
+        return Card.findByIdAndRemove(req.params.cardId);
+      }
+    })
+    .then((card) => {
+      res.send(card);
     })
     .catch((err) => {
       if (err instanceof HTTPError) {
         next(err);
-      } else if (err.name === 'ValidationError' || err.name === 'CastError') {
+      } else if (err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные для удаления карточки.'));
       } else {
         next(new ServerError(err.message));

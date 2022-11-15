@@ -24,8 +24,6 @@ export const login = (req, res, next) => {
     .catch((err) => {
       if (err instanceof HTTPError) {
         next(err);
-      } else if (err.name === 'ValidationError' || err.name === 'CastError') {
-        next(new BadRequestError('Некорректные данные для пользователя.'));
       } else {
         next(new ServerError(err.message));
       }
@@ -57,7 +55,7 @@ export const getUserById = (req, res, next) => {
     .catch((err) => {
       if (err instanceof HTTPError) {
         next(err);
-      } else if (err.name === 'ValidationError' || err.name === 'CastError') {
+      } else if (err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные для поиска пользователя.'));
       } else {
         next(new ServerError(err.message));
@@ -79,7 +77,7 @@ export const createUser = (req, res, next) => {
     .catch((err) => {
       if (err instanceof HTTPError) {
         next(err);
-      } else if (err.name === 'ValidationError' || err.name === 'CastError') {
+      } else if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
       } else if (err.code === 11000) {
         next(new ConflictError('Пользователь с такой почтой уже существует'));

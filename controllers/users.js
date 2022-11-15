@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { constants } from 'http2';
 import { User } from '../models/user.js';
 import { BadRequestError } from '../errors/BadRequestError.js';
 import { HTTPError } from '../errors/HTTPError.js';
@@ -49,7 +50,7 @@ export const getUserById = (req, res, next) => {
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Пользователь с указанным _id не найден.');
-      } else res.send(user);
+      } else res.status(constants.HTTP_STATUS_OK).send(user);
     })
     .catch((err) => {
       if (err instanceof HTTPError) {
@@ -99,7 +100,7 @@ export const updateUserProfile = (req, res, next) => {
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Пользователь с указанным _id не найден.');
-      } else res.send(user);
+      } else res.status(constants.HTTP_STATUS_OK).send(user);
     })
     .catch((err) => {
       if (err instanceof HTTPError) {
@@ -125,7 +126,7 @@ export const updateUserAvatar = (req, res, next) => {
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Пользователь с указанным _id не найден.');
-      } else res.send(user);
+      } else res.status(constants.HTTP_STATUS_OK).send(user);
     })
     .catch((err) => {
       if (err instanceof HTTPError) {

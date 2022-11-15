@@ -66,7 +66,7 @@ export const likeCard = (req, res, next) => {
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Передан несуществующий _id карточки.');
-      } else res.send(card);
+      } else res.status(constants.HTTP_STATUS_OK).send(card);
     })
     .catch((err) => {
       if (err instanceof HTTPError) {

@@ -1,6 +1,5 @@
 import { celebrate, Joi } from 'celebrate';
-
-const urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9]{2,256}\.[a-z]{1,6}\b([-a-zA-Z0-9-._~:/?#\]@!$&'()*+,;=\S]*)/;
+import { urlRegex } from '../models/user.js';
 
 export const celebrateBodyUser = celebrate({
   body: Joi.object().keys({

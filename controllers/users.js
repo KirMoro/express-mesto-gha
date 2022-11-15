@@ -72,7 +72,7 @@ export const createUser = (req, res, next) => {
     })
     .then((document) => {
       const { password: removed, ...fields } = document.toObject();
-      res.send(fields);
+      res.status(constants.HTTP_STATUS_OK).send(fields);
     })
     .catch((err) => {
       if (err instanceof HTTPError) {

@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
-
-const urlRegex = /https?:\/\/(www\.)?[-a-zA-Z0-9]{2,256}\.[a-z]{1,6}\b([-a-zA-Z0-9-._~:/?#\]@!$&'()*+,;=\S]*)/;
+import { urlRegex } from './user.js';
 
 const cardSchema = new mongoose.Schema({
   name: {

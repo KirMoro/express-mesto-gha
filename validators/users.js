@@ -38,6 +38,6 @@ export const celebrateUserId = celebrate({
 
 export const celebrateUserMe = celebrate({
   params: Joi.object({
-    id: Joi.string().equal('me'),
+    userId: Joi.string().equal('me'),
   }).required(),
 });

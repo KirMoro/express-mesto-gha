@@ -32,12 +32,9 @@ export const celebrateProfile = celebrate({
 
 export const celebrateUserId = celebrate({
   params: Joi.object({
-    userId: Joi.string().hex().length(24).required(),
-  }).required(),
-});
-
-export const celebrateUserMe = celebrate({
-  params: Joi.object({
-    userId: Joi.string().equal('me'),
+    userId: Joi.alternatives().try(
+      Joi.string().equal('me'),
+      Joi.string().hex().length(24).required(),
+    ).required(),
   }).required(),
 });

@@ -45,7 +45,7 @@ export const deleteCard = (req, res, next) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные для удаления карточки.'));
       } else {
-        next(new ServerError(err.message));
+        next(err);
       }
     });
 };
@@ -91,7 +91,7 @@ export const dislikeCard = (req, res, next) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные для снятия лайка.'));
       } else {
-        next(new ServerError(err.message));
+        next(err);
       }
     });
 };

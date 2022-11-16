@@ -68,7 +68,7 @@ export const likeCard = (req, res, next) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные для постановки лайка.'));
       } else {
-        next(new ServerError(err.message));
+        next(err);
       }
     });
 };

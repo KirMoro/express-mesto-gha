@@ -1,6 +1,5 @@
 import { constants } from 'http2';
 import { Card } from '../models/card.js';
-import { HTTPError } from '../errors/HTTPError.js';
 import { ServerError } from '../errors/ServerError.js';
 import { BadRequestError } from '../errors/BadRequestError.js';
 import { NotFoundError } from '../errors/NotFoundError.js';
@@ -10,11 +9,7 @@ export const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send(cards))
     .catch((err) => {
-      if (err instanceof HTTPError) {
-        next(err);
-      } else {
-        next(new ServerError(err.message));
-      }
+      next(err);
     });
 };
 
@@ -24,9 +19,7 @@ export const createCard = (req, res, next) => {
   Card.create(newCard)
     .then((card) => res.status(constants.HTTP_STATUS_OK).send(card))
     .catch((err) => {
-      if (err instanceof HTTPError) {
-        next(err);
-      } else if (err.name === 'ValidationError' || err.name === 'CastError') {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные при создании карточки.'));
       } else {
         next(new ServerError(err.message));
@@ -49,9 +42,7 @@ export const deleteCard = (req, res, next) => {
       res.send(card);
     })
     .catch((err) => {
-      if (err instanceof HTTPError) {
-        next(err);
-      } else if (err.name === 'CastError') {
+      if (err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные для удаления карточки.'));
       } else {
         next(new ServerError(err.message));
@@ -74,9 +65,7 @@ export const likeCard = (req, res, next) => {
       } else res.status(constants.HTTP_STATUS_OK).send(card);
     })
     .catch((err) => {
-      if (err instanceof HTTPError) {
-        next(err);
-      } else if (err.name === 'ValidationError' || err.name === 'CastError') {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные для постановки лайка.'));
       } else {
         next(new ServerError(err.message));
@@ -99,9 +88,7 @@ export const dislikeCard = (req, res, next) => {
       } else res.send(card);
     })
     .catch((err) => {
-      if (err instanceof HTTPError) {
-        next(err);
-      } else if (err.name === 'ValidationError' || err.name === 'CastError') {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные для снятия лайка.'));
       } else {
         next(new ServerError(err.message));

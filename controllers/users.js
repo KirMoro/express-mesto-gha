@@ -48,7 +48,7 @@ export const getUserById = (req, res, next) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные для поиска пользователя.'));
       } else {
-        next(new ServerError(err.message));
+        next(err);
       }
     });
 };

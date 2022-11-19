@@ -13,6 +13,8 @@ import { createUser, login } from './controllers/users.js';
 import { auth } from './middlewares/auth.js';
 import { celebrateBodyUser, celebrateLoginUser } from './validators/users.js';
 import { NotFoundError } from './errors/NotFoundError.js';
+import {requestLogger} from "./middlewares/logger.js";
+import {errorLogger} from "express-winston";
 
 const { PORT = 3000 } = process.env;
 
@@ -30,6 +32,7 @@ app.set('config', config);
 
 mongoose.set({ runValidators: true });
 mongoose.connect('mongodb://localhost:27017/mestodb');
+app.use(requestLogger);
 
 app.post('/signup', celebrateBodyUser, createUser);
 app.post('/signin', celebrateLoginUser, login);
@@ -38,6 +41,7 @@ app.use('/users', auth, userRoutes);
 app.use('/cards', auth, cardRoutes);
 
 app.all('/*', (req, res, next) => next(new NotFoundError('Запрошена несуществующая страница')));
+app.use(errorLogger);
 
 app.use(errors());
 app.use((err, req, res, next) => {

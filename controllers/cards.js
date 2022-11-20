@@ -73,6 +73,7 @@ export const likeCard = (req, res, next) => {
     });
 };
 
+
 export const dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
     req.params.cardId,
@@ -89,7 +90,7 @@ export const dislikeCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        next(new BadRequestError('Переданы некорректные данные для снятия лайка.'));
+        next(new BadRequestError('Переданы некорректные данные для снятия лайка'));
       } else {
         next(err);
       }

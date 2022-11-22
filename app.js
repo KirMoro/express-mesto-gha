@@ -15,6 +15,7 @@ import { celebrateBodyUser, celebrateLoginUser } from './validators/users.js';
 import { NotFoundError } from './errors/NotFoundError.js';
 import {requestLogger} from "./middlewares/logger.js";
 import {errorLogger} from "express-winston";
+import cors from "cors";
 
 const { PORT = 3000 } = process.env;
 
@@ -33,7 +34,7 @@ app.set('config', config);
 mongoose.set({ runValidators: true });
 mongoose.connect('mongodb://localhost:27017/mestodb');
 app.use(requestLogger);
-
+app.use(cors())
 app.post('/signup', celebrateBodyUser, createUser);
 app.post('/signin', celebrateLoginUser, login);
 

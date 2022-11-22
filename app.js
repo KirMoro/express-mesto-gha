@@ -27,13 +27,10 @@ process.on('unhandledRejection', (err) => {
 const app = express();
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(cors(
-  {
-    origin: '*',
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  },
-));
+
+app.use(cors());
+app.options('*', cors());
+
 const config = dotenv.config({ path: path.resolve('.env.common') }).parsed;
 app.set('config', config);
 

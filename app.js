@@ -25,6 +25,7 @@ process.on('unhandledRejection', (err) => {
 });
 
 const app = express();
+app.use(cors());
 app.use(bodyParser.json());
 app.use(cookieParser());
 
@@ -34,7 +35,6 @@ app.set('config', config);
 mongoose.set({ runValidators: true });
 mongoose.connect('mongodb://localhost:27017/mestodb');
 app.use(requestLogger);
-app.use(cors())
 app.post('/signup', celebrateBodyUser, createUser);
 app.post('/signin', celebrateLoginUser, login);
 

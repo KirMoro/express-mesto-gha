@@ -7,15 +7,14 @@ import * as dotenv from 'dotenv';
 import * as path from 'path';
 import { errors } from 'celebrate';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import { userRoutes } from './routes/users.js';
 import { cardRoutes } from './routes/cards.js';
 import { createUser, login } from './controllers/users.js';
 import { auth } from './middlewares/auth.js';
 import { celebrateBodyUser, celebrateLoginUser } from './validators/users.js';
 import { NotFoundError } from './errors/NotFoundError.js';
-import {requestLogger} from "./middlewares/logger.js";
-import {errorLogger} from "express-winston";
-import cors from "cors";
+import { requestLogger, errorLogger } from './middlewares/logger.js';
 
 const { PORT = 3000 } = process.env;
 
@@ -32,8 +31,10 @@ app.use(cors());
 app.options('*', cors());
 
 dotenv.config();
-const config = dotenv.config({ path: path
-    .resolve(process.env.NODE_ENV === 'production' ? '.env' : '.env.common') })
+const config = dotenv.config({
+  path: path
+    .resolve(process.env.NODE_ENV === 'production' ? '.env' : '.env.common'),
+})
   .parsed;
 
 app.set('config', config);
@@ -54,13 +55,13 @@ app.post('/signin', celebrateLoginUser, login);
 app.use('/users', auth, userRoutes);
 app.use('/cards', auth, cardRoutes);
 
-app.all('/*', (req, res, next) => next(new NotFoundError('Запрошена несуществующая страница')));
+app.all('/*', auth, (req, res, next) => next(new NotFoundError('Запрошена несуществующая страница')));
 app.use(errorLogger);
 
 app.use(errors());
 app.use((err, req, res, next) => {
   const status = err.status || constants.HTTP_STATUS_INTERNAL_SERVER_ERROR;
-  const message = err.message || 'Неизвестная ошибка';
+  const message = status === constants.HTTP_STATUS_INTERNAL_SERVER_ERROR ? 'Неизвестная ошибка' : err.message;
   res.status(status).send({ message });
   next();
 });

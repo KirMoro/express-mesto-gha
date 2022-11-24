@@ -8,9 +8,7 @@ import { ForbiddenError } from '../errors/ForbiddenError.js';
 export const getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send(cards))
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
 
 export const createCard = (req, res, next) => {
@@ -72,7 +70,6 @@ export const likeCard = (req, res, next) => {
       }
     });
 };
-
 
 export const dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(

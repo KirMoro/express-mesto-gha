@@ -29,9 +29,7 @@ export const login = (req, res, next) => {
 export const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch((err) => {
-      next(err);
-    });
+    .catch(next);
 };
 
 export const getUserById = (req, res, next) => {
